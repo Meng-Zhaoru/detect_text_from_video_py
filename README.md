@@ -1,0 +1,1 @@
+# detect_text_from_video_py
