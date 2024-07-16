@@ -108,11 +108,51 @@ def video_detect_text(video_file_path):
     annotation_result = result.annotation_results[0]
     # print(len(result.annotation_results))
 
-    text_recognized = ""
-    for text_annotation in annotation_result.text_annotations:
-        text_recognized += text_annotation.text
+    # text_recognized = ""
+    # for text_annotation in annotation_result.text_annotations:
+    #     text_recognized += (text_annotation.text + "\n")
 
-    print("Text:\n" + text_recognized + "\n")
+    # for text_annotation in annotation_result.text_annotations:
+    #     print("\nText: {}".format(text_annotation.text))
+    #
+    #     # Get the first text segment
+    #     text_segment = text_annotation.segments[0]
+    #     start_time = text_segment.segment.start_time_offset
+    #     end_time = text_segment.segment.end_time_offset
+    #     print(
+    #         "start_time: {}, end_time: {}".format(
+    #             start_time.seconds + start_time.microseconds * 1e-6,
+    #             end_time.seconds + end_time.microseconds * 1e-6,
+    #             )
+    #     )
+    #     print("Confidence: {}".format(text_segment.confidence))
+
+    # print("Text:\n" + text_recognized + "\n")
+
+    # Collect all text annotations with their time segments
+    text_annotations_with_times = []
+
+    for text_annotation in annotation_result.text_annotations:
+        for text_segment in text_annotation.segments:
+            start_time = text_segment.segment.start_time_offset
+            end_time = text_segment.segment.end_time_offset
+            text_annotations_with_times.append(
+                (
+                    text_annotation.text,
+                    start_time.seconds + start_time.microseconds * 1e-6,
+                    end_time.seconds + end_time.microseconds * 1e-6,
+                    text_segment.confidence,
+                )
+            )
+
+    # Sort text annotations by start time
+    text_annotations_with_times.sort(key=lambda x: x[1])
+
+    # Print sorted text annotations
+    for text, start_time, end_time, confidence in text_annotations_with_times:
+        print("\nText: {}".format(text))
+        print("start_time: {}, end_time: {}".format(start_time, end_time))
+        print("Confidence: {}".format(confidence))
 
 
 def preprocess_video(input_video_path, output_folder):
@@ -172,6 +212,7 @@ def main():
 
     preprocessed_video = preprocess_video(input_video_path, output_folder)
     video_detect_text(preprocessed_video)
+    video_detect_text(input_video_path)
     video_speech_transcript(input_video_path)
 
 if __name__ == "__main__":
