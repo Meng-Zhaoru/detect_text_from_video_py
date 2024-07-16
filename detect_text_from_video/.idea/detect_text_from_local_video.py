@@ -112,7 +112,7 @@ def video_detect_text(video_file_path):
     for text_annotation in annotation_result.text_annotations:
         text_recognized += text_annotation.text
 
-    print("Text: " + text_recognized + "\n")
+    print("Text:\n" + text_recognized + "\n")
 
 
 def preprocess_video(input_video_path, output_folder):
